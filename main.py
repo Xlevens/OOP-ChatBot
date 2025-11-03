@@ -1,27 +1,50 @@
-from Modules.user import UserFront
-from Modules.Chat import MainChat
-from Modules.Ronin import RoninChat
-from Modules.Zubaidas import ZubaidaChat
+# main.py
+
+from Modules.interface import Interface
 from Modules.Khaadi import KhaadiChat
 
-CB = MainChat("Rizwan")
+def main():
+    print("👋 Welcome to Khaadi Chat Support!\n")
 
-print(CB.req())
-res = input()
-msg, b = CB.response(res)
-print(msg)
+    # Step 1: Get user info
+    name = input("Please enter your name: ").strip()
+    contact = input("Please enter your contact number: ").strip()
+    order = input("Please enter your order ID: ").strip()
 
+    # Step 2: Create Interface object (user info)
+    user = Interface(name, contact, order)
+    print("\n✅ User info registered:")
+    user.ordercheck()
+    print(user)
+    print(user.orderstatus())
 
-while True:
-        query = input("You: ")
-        
+    print("\n--- Starting chat ---\n")
+
+    # Step 3: Create chatbot object
+    bot = KhaadiChat(user.name)
+
+    # Show welcome message from bot
+    print(bot.response())
+
+    # Step 4: Chat loop
+    while True:
+        query = input("You: ").strip()
+
+        # Exit condition
         if query.lower() in ["exit", "quit", "bye"]:
-            print("Chat ended. Goodbye!")
+            print("IBOT: Chat ended. Goodbye! 👋")
             break
 
-        response = b.queryset(query)
-        print(response)
+        # Set user query in chatbot
+        bot.chatbot_response(query)
 
-        if "goodbye" in response.lower() or "bye" in response.lower():
-            print("Chat ended. Goodbye!")
+        # Print bot response
+        print(bot)
+
+        # Optional: end chat if the user says goodbye
+        if any(word in query.lower() for word in ["goodbye", "bye", "thanks"]):
+            print("IBOT: Chat ended. Goodbye! 👋")
             break
+
+if __name__ == "__main__":
+    main()
